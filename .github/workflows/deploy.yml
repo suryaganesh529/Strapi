@@ -28,7 +28,7 @@ jobs:
         run: zip -r app.zip . -x ".git/*"
 
       - name: Azure login
-        run: az login --identity --client-id <your-client-id>
+        run: az login --identity --client-id 791e261e-8abe-4360-85bd-d6d5527c3760
 
       - name: Deploy
         run: |
