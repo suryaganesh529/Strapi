@@ -35,4 +35,4 @@ jobs:
                     --resource-group Devops \
                     --name strapiprelogin \
                     --src-path app.zip \
-                    --type zip 
+                    --type zip
