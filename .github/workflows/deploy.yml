@@ -15,9 +15,6 @@ jobs:
               with:
                   node-version: 20.x
 
-            - name: Clean dependencies (fix platform issues)
-              run: |
-                  rm -rf node_modules package-lock.json
 
             - name: Install dependencies
               run: npm install
@@ -28,8 +25,14 @@ jobs:
             - name: Zip artifact
               run: zip -r app.zip . -x "node_modules/*" ".git/*"
 
+            - name: Azure login
+              run: |
+                az login --identity --client-id 791e261e-8abe-4360-85bd-d6d5527c3760
             - name: Deploy to Azure Web App
-              uses: azure/webapps-deploy@v2
-              with:
-                  app-name: strapiprelogin # Replace with your Azure Web App name
-                  publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+              run: |
+                az webapp deploy \
+                    --resource-group Devops \
+                    --name strapiprelogin \
+                    --src-path app.zip \
+                    --type zip \
+                    --build-remote true
