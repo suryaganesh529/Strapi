@@ -19,7 +19,7 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Build Strapi
+            - name: Build Strapi application
               run: npm run build
 
             - name: Zip artifact
