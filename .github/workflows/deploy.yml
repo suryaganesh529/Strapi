@@ -23,7 +23,7 @@ jobs:
               run: npm run build
 
             - name: Zip artifact
-              run: zip -r app.zip . -x "node_modules/*" ".git/*"
+              run: zip -r app.zip . -x ".git/*"
 
             - name: Azure login
               run: |
