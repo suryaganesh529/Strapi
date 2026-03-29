@@ -43,17 +43,11 @@ jobs:
             - name: Deploy to Azure Web App
               run: |
                   az webapp deploy \
-                    --name teststrapi \
-                    --resource-group teststrapi_group \
-                    --src-path app.zip \
-                    --type zip \
-                    --async true \
-                    --timeout 300
-
-            - name: Wait for Strapi to start
-              run: |
-                  echo "⏳ Waiting for Strapi to start..."
-                  sleep 120
+                      --name teststrapi \
+                      --resource-group teststrapi_group \
+                      --src-path app.zip \
+                      --type zip \
+                      --async true 2>&1 | grep -A 20 "Starting the site" | head -20
 
             - name: Verify App is Running
               run: |
