@@ -2,7 +2,7 @@ name: Strapi Build and Deploy
 on:
   push:
     branches:
-      - morning-backup # Optional: another branch for backup deployments
+      - morning-backup # Optional: another branch for backup deployments...
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
