@@ -1,0 +1,44 @@
+name: Deploy Strapi to Azure Web App
+
+on:
+    push:
+        branches:
+            - main # Change to your deployment branch
+            - morning-backup # Optional: another branch for backup deployments
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            # 1. Checkout code
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            # 2. Setup Node.js
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "20"
+                  cache: "npm"
+
+            # 3. Install dependencies
+            - name: Install dependencies
+              run: npm install
+
+            # 4. Build Strapi admin panel
+            - name: Build Strapi
+              run: npm run build
+              env:
+                  NODE_ENV: production
+                  APP_KEYS: ${{ secrets.APP_KEYS }}
+                  API_TOKEN_SALT: ${{ secrets.API_TOKEN_SALT }}
+                  ADMIN_JWT_SECRET: ${{ secrets.ADMIN_JWT_SECRET }}
+                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+            # 5. Deploy to Azure Web App
+            - name: Deploy to Azure Web App
+              uses: azure/webapps-deploy@v3
+              with:
+                  app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+                  publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+                  package: .
