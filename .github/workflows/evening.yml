@@ -1,0 +1,82 @@
+name: Strapi Build and Deploy
+
+on:
+    push:
+        branches:
+            - morning-backup
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20.x
+                  cache: "npm"
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Build Strapi
+              run: npm run build
+              env:
+                  NODE_ENV: production
+                  APP_KEYS: ${{ secrets.APP_KEYS }}
+                  API_TOKEN_SALT: ${{ secrets.API_TOKEN_SALT }}
+                  ADMIN_JWT_SECRET: ${{ secrets.ADMIN_JWT_SECRET }}
+                  TRANSFER_TOKEN_SALT: ${{ secrets.TRANSFER_TOKEN_SALT }}
+                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+            - name: Zip artifact
+              run: |
+                  zip -r app.zip . \
+                    -x ".git/*" \
+                    -x ".github/*" \
+                    -x "*.tar.gz" \
+                    -x "*.zip"
+                  echo "Zip size: $(du -sh app.zip | cut -f1)"
+
+            - name: Login to Azure
+              uses: azure/login@v2
+              with:
+                  creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+            - name: Stop Web App
+              run: |
+                  echo "⏹️ Stopping Web App..."
+                  az webapp stop \
+                    --name teststrapi \
+                    --resource-group teststrapi_group
+                  echo "✅ Web App stopped!"
+
+            - name: Clean wwwroot
+              run: |
+                  echo "🧹 Cleaning wwwroot..."
+                  az rest \
+                    --method DELETE \
+                    --url "https://teststrapi.scm.azurewebsites.net/api/vfs/site/wwwroot/" \
+                    --headers "Content-Type=application/json" || true
+                  echo "✅ wwwroot cleaned!"
+
+            - name: Deploy to Azure Web App
+              run: |
+                  echo "🚀 Deploying to Azure..."
+                  az webapp deploy \
+                    --name teststrapi \
+                    --resource-group teststrapi_group \
+                    --src-path app.zip \
+                    --type zip \
+                    --async true \
+
+            - name: Start Web App
+              run: |
+                  echo "▶️ Starting Web App..."
+                  az webapp start \
+                    --name teststrapi \
+                    --resource-group teststrapi_group
+                  echo "✅ Web App started!"
