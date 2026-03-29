@@ -1,7 +1,10 @@
 name: Strapi Build and Deploy
 
 on:
-    workflow_dispatch:
+    push:
+        branches:
+            - main # Change to your deployment branch....
+            - morning-backup # Optional: another branch for backup deployments
 
 jobs:
     build-and-deploy:
