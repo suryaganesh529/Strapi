@@ -28,12 +28,6 @@ jobs:
             # 4. Build Strapi admin panel
             - name: Build Strapi
               run: npm run build
-              env:
-                  NODE_ENV: production
-                  APP_KEYS: ${{ secrets.APP_KEYS }}
-                  API_TOKEN_SALT: ${{ secrets.API_TOKEN_SALT }}
-                  ADMIN_JWT_SECRET: ${{ secrets.ADMIN_JWT_SECRET }}
-                  JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
             # 5. Deploy to Azure Web App
             - name: Deploy to Azure Web App
