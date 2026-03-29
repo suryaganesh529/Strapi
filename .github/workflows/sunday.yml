@@ -3,8 +3,8 @@ name: Deploy Strapi to Azure Web App
 on:
     push:
         branches:
-            - main # Change to your deployment branch....
-            - morning-backup # Optional: another branch for backup deployments
+        #    - main # Change to your deployment branch....
+        #   - morning-backup # Optional: another branch for backup deployments
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest

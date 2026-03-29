@@ -22,7 +22,7 @@ jobs:
         run: npm run build
 
       - name: Zip artifact
-        run: zip -r app.zip .
+        run: zip -r app.zip . -x ".git/*" ".github/*" "*.tar.gz" "*.zip"
 
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
